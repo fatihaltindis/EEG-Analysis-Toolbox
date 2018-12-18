@@ -45,8 +45,8 @@ else
           case 'frequency'
               if ~isnumeric(varargin{i+1}) || length(varargin{i+1}) ~= 1
                   error('Frequency should be a single number.')
-              elseif varargin{i+1} <= 0 || rem(varargin{i+1},1) ~= 0
-                  error('Frequency should be a positive integer.')
+              elseif varargin{i+1} < 0
+                  error('Frequency should be a positive number.')
               else
                   freq = varargin{i+1};
               end
