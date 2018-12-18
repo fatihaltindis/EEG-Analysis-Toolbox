@@ -73,19 +73,19 @@ else
               end
               
           case 'band'
-              if varargin{i+1} == 'delta'
+              if strcmp(varargin{i+1},'delta')
                   band_name = 'delta';
                   band_range = [0.5 4];
-              elseif varargin{i+1} == 'theta'
+              elseif strcmp(varargin{i+1},'theta')
                   band_name = 'theta';
                   band_range = [4 7];
-              elseif varargin{i+1} == 'alpha'
+              elseif strcmp(varargin{i+1},'alpha')
                   band_name = 'alpha';
                   band_range = [7.5 13];
-              elseif varargin{i+1} == 'beta'
+              elseif strcmp(varargin{i+1},'beta')
                   band_name = 'beta';
                   band_range = [15 28];
-              elseif varargin{i+1} == 'gamma'
+              elseif strcmp(varargin{i+1},'gamma')
                   band_name = 'gamma';
                   band_range = [29 48];
               else
