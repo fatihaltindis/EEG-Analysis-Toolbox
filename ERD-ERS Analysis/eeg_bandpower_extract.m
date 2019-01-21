@@ -111,7 +111,7 @@ else
               error(['Unrecognized parameter: ''' varargin{i} '''']);
       end
       
-  end
+    end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -119,8 +119,9 @@ end
 band_filter = designfilt('bandpassiir','FilterOrder',f_order, ...
          'HalfPowerFrequency1',band_range(1),'HalfPowerFrequency2',...
          band_range(2),'SampleRate',fs);
-     
-filtered_eeg = filter(band_filter,eeg')';
+
+[b,a] = sos2tf(band_filter.Coefficients);     
+filtered_eeg = filter(b,a,eeg')';
 bandpower = filtered_eeg.^2;
 
 end
