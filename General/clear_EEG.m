@@ -87,8 +87,10 @@ else
 end
 
 [ics, A, ~] = fastica(eeg,'verbose','off','numOfIC',row,'g','gauss');
-while size(ics,1) < row
+trial = 0;
+while (size(ics,1) < row) && (trial < 21)
     [ics, A, ~] = fastica(eeg,'verbose','off','numOfIC',row,'g','gauss');
+    trial = trial+1;
 end
 
 if (~isnumeric(sensivity) || sensivity < 1 || sensivity > 3 || rem(sensivity,1)~= 0),
@@ -105,33 +107,36 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Wavelet analysis begins
-for ch = 1:row
-    fb5 = cwtfilterbank('SignalLength',col,'SamplingFrequency',fs,'TimeBandwidth',time_b);
-    [w5,f] = cwt(ics(ch,:),'FilterBank',fb5);
-    [w6,f] = cwt(ics(ch,:).^2,'FilterBank',fb5);
-    w_coef = sum((abs(w5(31:50,:)).*abs(w6(31:50,:))).^2)./20;
-    [pks,locs,w,~] = findpeaks(w_coef,fs,'MinPeakHeight',50);
-    
-    if isempty(pks) == 0
-        cleaner = ones(1,col);
-        x = locs*250-round(w*250);
-        x(x<1) = 1;
-        y = locs*250+100;
-        delete_area = round(cell2mat(arrayfun(@(a,b)a:b-1, x,y,'UniformOutput',false)));
-        cleaner(delete_area) = 0; cleaner = cleaner(1,1:col);
-        temp = cleaner.*ics(ch,:);
-        
-        comp_no = [comp_no ch];
-        noise_times{ch} = locs;
-        
-        ics(ch,:) = temp;
-    end
-    
-    
-    
-end
+if isempty(ics) == 0
+    for ch = 1:size(ics,1)
+        fb5 = cwtfilterbank('SignalLength',col,'SamplingFrequency',fs,'TimeBandwidth',time_b);
+        [w5,f] = cwt(ics(ch,:),'FilterBank',fb5);
+        [w6,f] = cwt(ics(ch,:).^2,'FilterBank',fb5);
+        w_coef = sum((abs(w5(31:50,:)).*abs(w6(31:50,:))).^2)./20;
+        [pks,locs,w,~] = findpeaks(w_coef,fs,'MinPeakHeight',50);
 
-clean_eeg = A*ics;
+        if isempty(pks) == 0
+            cleaner = ones(1,col);
+            x = locs*250-round(w*250);
+            x(x<1) = 1;
+            y = locs*250+100;
+            delete_area = round(cell2mat(arrayfun(@(a,b)a:b-1, x,y,'UniformOutput',false)));
+            cleaner(delete_area) = 0; cleaner = cleaner(1,1:col);
+            temp = cleaner.*ics(ch,:);
+
+            comp_no = [comp_no ch];
+            noise_times{ch} = locs;
+
+            ics(ch,:) = temp;
+        end
+    
+    
+    
+    end
+    clean_eeg = A*ics;
+else
+    clean_eeg = eeg;
+end
 
 if row/2 < 2
     p_f = [row 1];
