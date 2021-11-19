@@ -80,10 +80,10 @@ else
                   error('Blink artefact start time exceeds signal length');
               else
                   f = randi([10 20],5,1)/10;
-                  s = transpose(channel_max_amplitudes)*sum(sin(2*pi*f*n+pi*rand))/5;
-                  signal_in(:,artefact_start:artefact_start+(1.25*fs))...
-                      = signal_in(:,artefact_start:artefact_start+(1.25*fs))...
-                      + s(30:30+(1.25*fs));
+                  s = (channel_max_amplitudes)*sum(sin(2*pi*f*n+pi*rand))/5;
+                  signal_in(:,artefact_start:artefact_start+round(1.25*fs))...
+                      = signal_in(:,artefact_start:artefact_start+round(1.25*fs))...
+                      + s(30:30+round(1.25*fs));
               end
           case 'muscle'
               artefact_start = fs*varargin{i+1};
